@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RuleView">
+        <!--设置初始指向的刻度-->
+        <attr name="initValue" format="integer"/>
+        <!--刻度值字体大小-->
+        <attr name="scaleTextSize" format="dimension"/>
+        <!--刻度值字体颜色-->
+        <attr name="scaleTextColor" format="reference|color"/>
+        <!--刻度值放大字体大小-->
+        <attr name="scaleTextZoomSize" format="dimension"/>
+        <!--刻度距离间距-->
+        <attr name="scaleSpace" format="dimension"/>
+        <!--低刻度值颜色-->
+        <attr name="lowScaleLineColor" format="reference|color"/>
+        <!--中刻度值颜色-->
+        <attr name="middleScaleLineColor" format="reference|color"/>
+        <!--高刻度值颜色-->
+        <attr name="highScaleLineColor" format="reference|color"/>
+        <!--低刻度线高度-->
+        <attr name="lowScaleHeight" format="dimension"/>
+        <!--中刻度线高度-->
+        <attr name="middleScaleHeight" format="dimension"/>
+        <!--高刻度线高度-->
+        <attr name="heightScaleHeight" format="dimension"/>
+        <!--刻度启始值-->
+        <attr name="scaleStartValue" format="integer"/>
+        <!--刻度终值-->
+        <attr name="scaleEndValue" format="integer"/>
+        <!--是否显示中刻度线-->
+        <attr name="showMiddleScaleLine" format="boolean"/>
+        <!--是否显示高刻度线-->
+        <attr name="showHeightScaleLine" format="boolean"/>
+        <!--是否显示低刻度线-->
+        <attr name="showLowScaleLine" format="boolean"/>
+        <!--是否显示中刻度值-->
+        <attr name="showMiddleScaleNumber" format="boolean"/>
+        <!--是否显示低刻度值-->
+        <attr name="showLowScaleNumber" format="boolean"/>
+        <!--是否显示高刻度值-->
+        <attr name="showHeightScaleNumber" format="boolean"/>
+        <!--开启刻度值放大效果-->
+        <attr name="zoom" format="boolean"/>
+        <!--开启刻度线圆角-->
+        <attr name="roundScaleLine" format="boolean"/>
+        <!--低刻度线宽度-->
+        <attr name="lowScaleStrokeWidth" format="dimension"/>
+        <!--中刻度线宽度-->
+        <attr name="middleScaleStrokeWidth" format="dimension"/>
+        <!--高刻度线宽度-->
+        <attr name="highScaleStrokeWidth" format="dimension"/>
+        <!--紧贴模式下数值和刻度之间的间隔-->
+        <attr name="valueScaleSpace" format="dimension"/>
+        <!--相邻的中刻度之间间隔的的刻度数-->
+        <attr name="middleSpaceValueSpace" format="integer"/>
+        <!--相邻的高刻度之间间隔的的刻度数-->
+        <attr name="highSpaceValeSpace" format="integer"/>
+
+        <!--布局模式-->
+        <attr name="viewStyle">
+            <enum name="valueDownScaleUpStyle" value="1"/>
+            <enum name="valueUpScaleDownStyle" value="2"/>
+            <enum name="valueDownScaleUpCloseStyle" value="3"/>
+            <enum name="valueUpScaleDownCloseStyle" value="4"/>
+        </attr>
+
+    </declare-styleable>
+</resources>

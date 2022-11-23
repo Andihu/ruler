@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="13"
+        android:textColor="#323232"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/rule_view"
+        app:layout_constraintStart_toStartOf="@+id/rule_view"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="KM"
+        app:layout_constraintBottom_toBottomOf="@+id/value"
+        app:layout_constraintStart_toEndOf="@+id/value" />
+
+    <com.h.ruler.RuleView
+        android:id="@+id/rule_view"
+        android:layout_width="300dp"
+        android:layout_height="70dp"
+        app:heightScaleHeight="70dp"
+        app:highScaleLineColor="#DADEEC"
+        app:highScaleStrokeWidth="2dp"
+        app:initValue="15"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/value"
+        app:lowScaleHeight="30dp"
+        app:lowScaleLineColor="#DADEEC"
+        app:lowScaleStrokeWidth="2dp"
+        app:middleScaleHeight="50dp"
+        app:middleScaleLineColor="#DADEEC"
+        app:middleScaleStrokeWidth="2dp"
+        app:scaleEndValue="30"
+        app:scaleSpace="12dp"
+        app:scaleStartValue="3"
+        app:scaleTextColor="#DADEEC"
+        app:scaleTextSize="12sp"
+        app:scaleTextZoomSize="24sp"
+        app:showHeightScaleLine="false"
+        app:showLowScaleNumber="false"
+        app:valueScaleSpace="14dp"
+        app:viewStyle="valueDownScaleUpStyle"
+        app:zoom="false" />
+
+    <View
+        android:layout_width="4dp"
+        android:layout_height="0dp"
+        android:background="#3C6EF0"
+        app:layout_constraintBottom_toBottomOf="@id/rule_view"
+        app:layout_constraintEnd_toEndOf="@+id/rule_view"
+        app:layout_constraintStart_toStartOf="@+id/rule_view"
+        app:layout_constraintTop_toTopOf="@id/rule_view" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="#eaeaea"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rule_view" />
+
+    <com.h.ruler.RuleView
+        android:id="@+id/rule_view_1"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="8dp"
+        app:heightScaleHeight="50dp"
+        app:highScaleLineColor="#388E3C"
+        app:highScaleStrokeWidth="2dp"
+        app:initValue="15"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view"
+        app:lowScaleHeight="30dp"
+        app:lowScaleLineColor="#689F38"
+        app:lowScaleStrokeWidth="2dp"
+        app:middleScaleHeight="40dp"
+        app:middleScaleLineColor="#00C853"
+        app:middleScaleStrokeWidth="2dp"
+        app:scaleEndValue="30"
+        app:scaleSpace="15dp"
+        app:scaleStartValue="3"
+        app:scaleTextColor="#00C853"
+        app:scaleTextSize="15sp"
+        app:scaleTextZoomSize="24sp"
+        app:showHeightScaleLine="true"
+        app:showLowScaleNumber="false"
+        app:valueScaleSpace="14dp"
+        app:viewStyle="valueDownScaleUpStyle"
+        app:zoom="false" />
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="#eaeaea"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rule_view_1" />
+
+    <com.h.ruler.RuleView
+        android:id="@+id/rule_view_2"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/black"
+        app:heightScaleHeight="30dp"
+        app:highScaleLineColor="#D32F2F"
+        app:highScaleStrokeWidth="2dp"
+        app:initValue="10"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view2"
+        app:lowScaleHeight="20dp"
+        app:lowScaleLineColor="#388E3C"
+        app:lowScaleStrokeWidth="2dp"
+        app:middleScaleHeight="28dp"
+        app:middleScaleLineColor="#FBC02D"
+        app:middleScaleStrokeWidth="2dp"
+        app:scaleEndValue="40"
+        app:scaleSpace="24dp"
+        app:scaleStartValue="3"
+        app:scaleTextColor="#ffffff"
+        app:scaleTextSize="12sp"
+        app:scaleTextZoomSize="18sp"
+        app:showHeightScaleLine="true"
+        app:showLowScaleNumber="true"
+        app:valueScaleSpace="14dp"
+        app:viewStyle="valueDownScaleUpCloseStyle"
+        app:zoom="true" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
