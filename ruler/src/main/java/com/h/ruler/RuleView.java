@@ -566,7 +566,6 @@ public class RuleView extends View {
             canvas.drawText(text, 0, text.length(), (float) (x + ((rect.left * 1.0 - rect.right * 1.0) / 2)), y + (rect.bottom - rect.top), textPaint);
         } else if (viewStyle == valueUpScaleDownCloseStyle) {
             canvas.drawText(text, 0, text.length(), (float) (x + ((rect.left * 1.0 - rect.right * 1.0) / 2)), y - valueScaleSpace / 2, textPaint);
-
         }
     }
 
