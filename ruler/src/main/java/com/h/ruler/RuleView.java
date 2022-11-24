@@ -34,6 +34,8 @@ public class RuleView extends View {
     private int scaleTextColor;
     // 刻度数字的画笔
     private Paint textPaint;
+    // 中心线画笔
+    private Paint centerLinePaint;
     //小刻度画笔
     private Paint lowScalePaint;
     //中刻度画笔
@@ -88,6 +90,12 @@ public class RuleView extends View {
     private float valueScaleSpace = 40;
     //设置初始指向的刻度
     private int initValue = -1;
+    //是否显示中心线
+    private boolean showCenterLine = true;
+    //中心线颜色
+    private int centerLineColor;
+    //中心线宽度
+    private int centerLineStrokeWidth = 10;
 
     /**
      * 中间刻度单位间隔
@@ -137,10 +145,10 @@ public class RuleView extends View {
 
     private float rightXAxis = -1;
 
+    //刻度值的文字高度
     private int textHeight;
 
     private boolean mIsExactly = false;
-
 
     public void setOnScaleChangeListener(OnScaleChangeListener onScaleChangeListener) {
         this.onScaleChangeListener = onScaleChangeListener;
@@ -196,13 +204,16 @@ public class RuleView extends View {
         showHeightScaleNumber = typedArray.getBoolean(R.styleable.RuleView_showHeightScaleNumber, true);
         zoom = typedArray.getBoolean(R.styleable.RuleView_zoom, true);
         isRoundScaleLine = typedArray.getBoolean(R.styleable.RuleView_roundScaleLine, true);
-        lowScaleStrokeWidth = (int) typedArray.getDimension(R.styleable.RuleView_lowScaleStrokeWidth, 10);
-        middleScaleStrokeWidth = (int) typedArray.getDimension(R.styleable.RuleView_middleScaleStrokeWidth, 10);
-        highScaleStrokeWidth = (int) typedArray.getDimension(R.styleable.RuleView_highScaleStrokeWidth, 10);
+        lowScaleStrokeWidth = (int) typedArray.getDimension(R.styleable.RuleView_lowScaleStrokeWidth, 5);
+        middleScaleStrokeWidth = (int) typedArray.getDimension(R.styleable.RuleView_middleScaleStrokeWidth, 5);
+        highScaleStrokeWidth = (int) typedArray.getDimension(R.styleable.RuleView_highScaleStrokeWidth, 5);
         valueScaleSpace = typedArray.getDimension(R.styleable.RuleView_valueScaleSpace, 20);
         middleSpaceValueSpace = typedArray.getInt(R.styleable.RuleView_middleSpaceValueSpace, 5);
         highSpaceValeSpace = typedArray.getInt(R.styleable.RuleView_highSpaceValeSpace, 10);
         viewStyle = typedArray.getInt(R.styleable.RuleView_viewStyle, 3);
+        centerLineColor = typedArray.getColor(R.styleable.RuleView_centerLineColor, Color.GRAY);
+        centerLineStrokeWidth = (int) typedArray.getDimension(R.styleable.RuleView_centerLineStrokeWidth, 5);
+        showCenterLine = typedArray.getBoolean(R.styleable.RuleView_showCenterLine, true);
         typedArray.recycle();
     }
 
@@ -245,6 +256,11 @@ public class RuleView extends View {
             highScalePaint.setStrokeCap(Paint.Cap.ROUND);
         }
 
+        centerLinePaint = new Paint();
+        centerLinePaint.setStyle(Paint.Style.FILL);
+        centerLinePaint.setColor(centerLineColor);
+        centerLinePaint.setStrokeWidth(centerLineStrokeWidth);
+
     }
 
     @Override
@@ -263,12 +279,12 @@ public class RuleView extends View {
         if (heightModel == MeasureSpec.AT_MOST) {
             mIsExactly = false;
             if (viewStyle == valueDownScaleUpCloseStyle || viewStyle == valueUpScaleDownCloseStyle) {
-                heightSize = (int) (textHeight + (showHeightScaleLine ? heightScaleHeight : showMiddleScaleLine ? middleScaleHeight : lowScaleHeight) + valueScaleSpace);
+                heightSize = (int) (textHeight + (showHeightScaleLine ? heightScaleHeight : showMiddleScaleLine ? middleScaleHeight : lowScaleHeight) + valueScaleSpace + getPaddingTop() + getPaddingBottom());
             } else if (viewStyle == valueDownScaleUpStyle || viewStyle == valueUpScaleDownStyle) {
-                heightSize = MeasureSpec.getSize(heightMeasureSpec) / 5;
+                heightSize = MeasureSpec.getSize(heightMeasureSpec) / 5 + getPaddingTop() + getPaddingBottom();
             }
         } else if (heightModel == MeasureSpec.EXACTLY) {
-            heightSize = MeasureSpec.getSize(heightMeasureSpec);
+            heightSize = MeasureSpec.getSize(heightMeasureSpec) + getPaddingTop() + getPaddingBottom();
             mIsExactly = true;
         }
         setMeasuredDimension(widthSize, heightSize);
@@ -354,7 +370,7 @@ public class RuleView extends View {
         } else if (viewStyle == valueUpScaleDownCloseStyle) {
             canvas.translate(mWidth / 2, textHeight + valueScaleSpace / 2);
         } else if (viewStyle == valueDownScaleUpCloseStyle) {
-            canvas.translate(mWidth / 2, showHeightScaleLine ? heightScaleHeight : showMiddleScaleLine ? middleScaleHeight : lowScaleHeight + valueScaleSpace / 2);
+            canvas.translate(mWidth / 2, (showHeightScaleLine ? heightScaleHeight : showMiddleScaleLine ? middleScaleHeight : lowScaleHeight) + (valueScaleSpace / 2));
         }
         // 向绘制左边 <----
         float currentValueXAxis = 0 + offsetX;
@@ -386,7 +402,7 @@ public class RuleView extends View {
         } else if (viewStyle == valueUpScaleDownCloseStyle) {
             canvas.translate(mWidth / 2, textHeight + valueScaleSpace / 2);
         } else if (viewStyle == valueDownScaleUpCloseStyle) {
-            canvas.translate(mWidth / 2, showHeightScaleLine ? heightScaleHeight : showMiddleScaleLine ? middleScaleHeight : lowScaleHeight + valueScaleSpace / 2);
+            canvas.translate(mWidth / 2, (showHeightScaleLine ? heightScaleHeight : showMiddleScaleLine ? middleScaleHeight : lowScaleHeight) + (valueScaleSpace / 2));
         }
         // 向绘制左边 <----
         float currentValueXAxis = 0 + offsetX;
@@ -429,61 +445,93 @@ public class RuleView extends View {
 
     //绘制刻度线
     private void drawScaleLineItem(float currentValueXAxis, int currentValue, Canvas canvas) {
+        float startCenterX = 0,endCenterX = 0,startCenterY =0,endCenterY=0;
+        float startLowX=0, endLowX=0, startLowY=0, endLowY=0;
+        float startMiddleX=0, endMiddleX=0, startMiddleY=0, endMiddleY=0;
+        float startHighX=0, endHighX=0, startHighY=0, endHighY=0;
         if (viewStyle == valueDownScaleUpStyle) {
-            if (showLowScaleLine) {
-                canvas.drawLine(currentValueXAxis, 0, currentValueXAxis, lowScaleHeight, lowScalePaint);
-            }
-            if (showMiddleScaleLine) {
-                if (currentValue % middleSpaceValueSpace == 0) {
-                    canvas.drawLine(currentValueXAxis, 0, currentValueXAxis, middleScaleHeight, middleScalePaint);
-                }
-            }
-            if (showHeightScaleLine) {
-                if (currentValue % highSpaceValeSpace == 0) {
-                    canvas.drawLine(currentValueXAxis, 0, currentValueXAxis, heightScaleHeight, highScalePaint);
-                }
-            }
+            startCenterX = -mWidth;
+            startCenterY = 0;
+            endCenterX = mWidth;
+            endCenterY = 0;
+            startLowX = currentValueXAxis;
+            startLowY = 0;
+            endLowX = currentValueXAxis;
+            endLowY = lowScaleHeight;
+            startMiddleX = currentValueXAxis;
+            startMiddleY = 0;
+            endMiddleX = currentValueXAxis;
+            endMiddleY = middleScaleHeight;
+            startHighX = currentValueXAxis;
+            startHighY = 0;
+            endHighX = currentValueXAxis;
+            endHighY = heightScaleHeight;
         } else if (viewStyle == valueDownScaleUpCloseStyle) {
-            if (showLowScaleLine) {
-                canvas.drawLine(currentValueXAxis, -lowScaleHeight - valueScaleSpace / 2, currentValueXAxis, -valueScaleSpace / 2, lowScalePaint);
-            }
-            if (showMiddleScaleLine) {
-                if (currentValue % middleSpaceValueSpace == 0) {
-                    canvas.drawLine(currentValueXAxis, -middleScaleHeight - valueScaleSpace / 2, currentValueXAxis, -valueScaleSpace / 2, middleScalePaint);
-                }
-            }
-            if (showHeightScaleLine) {
-                if (currentValue % highSpaceValeSpace == 0) {
-                    canvas.drawLine(currentValueXAxis, -heightScaleHeight - valueScaleSpace / 2, currentValueXAxis, -valueScaleSpace / 2, highScalePaint);
-                }
-            }
+            startCenterX = -mWidth;
+            startCenterY = -valueScaleSpace / 2;
+            endCenterX = mWidth;
+            endCenterY = -valueScaleSpace / 2;
+            startLowX = currentValueXAxis;
+            startLowY = -lowScaleHeight - valueScaleSpace / 2;
+            endLowX = currentValueXAxis;
+            endLowY = -valueScaleSpace / 2;
+            startMiddleX = currentValueXAxis;
+            startMiddleY = -middleScaleHeight - valueScaleSpace / 2;
+            endMiddleX = currentValueXAxis;
+            endMiddleY = -valueScaleSpace / 2;
+            startHighX = currentValueXAxis;
+            startHighY = -heightScaleHeight - valueScaleSpace / 2;
+            endHighX = currentValueXAxis;
+            endHighY = -valueScaleSpace / 2;
         } else if (viewStyle == valueUpScaleDownStyle) {
-            if (showLowScaleLine) {
-                canvas.drawLine(currentValueXAxis, mHeight, currentValueXAxis, mHeight - lowScaleHeight, lowScalePaint);
-            }
-            if (showMiddleScaleLine) {
-                if (currentValue % middleSpaceValueSpace == 0) {
-                    canvas.drawLine(currentValueXAxis, mHeight, currentValueXAxis, mHeight - middleScaleHeight, middleScalePaint);
-                }
-            }
-            if (showHeightScaleLine) {
-                if (currentValue % highSpaceValeSpace == 0) {
-                    canvas.drawLine(currentValueXAxis, mHeight, currentValueXAxis, mHeight - heightScaleHeight, highScalePaint);
-                }
-            }
+            startCenterX = -mWidth;
+            startCenterY = mHeight;
+            endCenterX = mWidth;
+            endCenterY = mHeight;
+            startLowX = currentValueXAxis;
+            startLowY = mHeight;
+            endLowX = currentValueXAxis;
+            endLowY = mHeight - lowScaleHeight;
+            startMiddleX = currentValueXAxis;
+            startMiddleY = mHeight;
+            endMiddleX = currentValueXAxis;
+            endMiddleY = mHeight - middleScaleHeight;
+            startHighX = currentValueXAxis;
+            startHighY = mHeight;
+            endHighX = currentValueXAxis;
+            endHighY = mHeight - heightScaleHeight;
         } else if (viewStyle == valueUpScaleDownCloseStyle) {
-            if (showLowScaleLine) {
-                canvas.drawLine(currentValueXAxis, 0 + valueScaleSpace / 2, currentValueXAxis, lowScaleHeight + valueScaleSpace / 2, lowScalePaint);
+            startCenterX = -mWidth;
+            startCenterY = valueScaleSpace / 2;
+            endCenterX = mWidth;
+            endCenterY = valueScaleSpace / 2;
+            startLowX = currentValueXAxis;
+            startLowY = 0 + valueScaleSpace / 2;
+            endLowX = currentValueXAxis;
+            endLowY = lowScaleHeight + valueScaleSpace / 2;
+            startMiddleX = currentValueXAxis;
+            startMiddleY = 0 + valueScaleSpace / 2;
+            endMiddleX = currentValueXAxis;
+            endMiddleY = middleScaleHeight + valueScaleSpace / 2;
+            startHighX = currentValueXAxis;
+            startHighY = 0 + valueScaleSpace / 2;
+            endHighX = currentValueXAxis;
+            endHighY = heightScaleHeight + valueScaleSpace / 2;
+        }
+        if (showCenterLine) {
+            canvas.drawLine(startCenterX, startCenterY, endCenterX, endCenterY, centerLinePaint);
+        }
+        if (showLowScaleLine) {
+            canvas.drawLine(startLowX, startLowY, endLowX, endLowY, lowScalePaint);
+        }
+        if (showMiddleScaleLine) {
+            if (currentValue % middleSpaceValueSpace == 0) {
+                canvas.drawLine(startMiddleX, startMiddleY, endMiddleX, endMiddleY, middleScalePaint);
             }
-            if (showMiddleScaleLine) {
-                if (currentValue % middleSpaceValueSpace == 0) {
-                    canvas.drawLine(currentValueXAxis, 0 + valueScaleSpace / 2, currentValueXAxis, middleScaleHeight + valueScaleSpace / 2, middleScalePaint);
-                }
-            }
-            if (showHeightScaleLine) {
-                if (currentValue % highSpaceValeSpace == 0) {
-                    canvas.drawLine(currentValueXAxis, 0 + valueScaleSpace / 2, currentValueXAxis, heightScaleHeight + valueScaleSpace / 2, highScalePaint);
-                }
+        }
+        if (showHeightScaleLine) {
+            if (currentValue % highSpaceValeSpace == 0) {
+                canvas.drawLine(startHighX, startHighY, endHighX, endHighY, highScalePaint);
             }
         }
 
@@ -517,7 +565,6 @@ public class RuleView extends View {
         } else if (viewStyle == valueUpScaleDownStyle) {
             canvas.drawText(text, 0, text.length(), (float) (x + ((rect.left * 1.0 - rect.right * 1.0) / 2)), y + (rect.bottom - rect.top), textPaint);
         } else if (viewStyle == valueUpScaleDownCloseStyle) {
-//            canvas.drawText(text, 0, text.length(), (float) (x + ((rect.left * 1.0 - rect.right * 1.0) / 2)), y - (rect.bottom - rect.top), textPaint);
             canvas.drawText(text, 0, text.length(), (float) (x + ((rect.left * 1.0 - rect.right * 1.0) / 2)), y - valueScaleSpace / 2, textPaint);
 
         }

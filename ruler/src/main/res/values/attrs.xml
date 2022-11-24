@@ -55,7 +55,12 @@
         <attr name="middleSpaceValueSpace" format="integer"/>
         <!--相邻的高刻度之间间隔的的刻度数-->
         <attr name="highSpaceValeSpace" format="integer"/>
-
+        <!--是否显示中心线-->
+        <attr name="showCenterLine" format="boolean"/>
+        <!--中心线宽度-->
+        <attr name="centerLineStrokeWidth" format="dimension"/>
+        <!--中心线颜色-->
+        <attr name="centerLineColor" format="reference|color"/>
         <!--布局模式-->
         <attr name="viewStyle">
             <enum name="valueDownScaleUpStyle" value="1"/>
