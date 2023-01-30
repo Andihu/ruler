@@ -316,6 +316,12 @@ public class RuleView extends View {
         }
         return true;
     }
+    public void setInitValue(int initValue) {
+        this.initValue = initValue;
+        leftXAxis = -spacing * (initValue - startValue);
+        rightXAxis = spacing * (endValue - initValue);
+        requestLayout();
+    }
 
     private float calculateOffset() {
         float v = offsetX % spacing;
